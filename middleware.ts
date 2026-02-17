@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// Simple in-memory rate limiter (good for dev, use Redis in production)
+// Simple in-memory rate limiter
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
 
 const RATE_LIMIT = {
@@ -13,12 +13,14 @@ export function middleware(request: NextRequest) {
   const ip = request.ip || request.headers.get('x-forwarded-for') || 'unknown';
   const now = Date.now();
   
-  // Clean up old entries
-  for (const [key, value] of rateLimitMap.entries()) {
+  // Clean up old entries - compatible way
+  const keysToDelete: string[] = [];
+  rateLimitMap.forEach((value, key) => {
     if (now > value.resetTime) {
-      rateLimitMap.delete(key);
+      keysToDelete.push(key);
     }
-  }
+  });
+  keysToDelete.forEach(key => rateLimitMap.delete(key));
   
   // Check rate limit
   const clientData = rateLimitMap.get(ip);
