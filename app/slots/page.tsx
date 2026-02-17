@@ -141,7 +141,7 @@ export default function SlotsPage() {
           className="text-center mb-4"
         >
           <h1 className="text-3xl md:text-4xl font-bold mb-2">Paintball Championship 2026</h1>
-          <p className="text-gray-400 text-sm">Feb 20, 2026 • 10:00 AM - 5:00 PM</p>
+          <p className="text-gray-400 text-sm">Feb 21, 2026 • 10:00 AM - 6:40 PM</p>
         </motion.div>
 
         {/* Continue Booking Banner */}
@@ -302,3 +302,4 @@ export default function SlotsPage() {
     </div>
   );
 }
+
