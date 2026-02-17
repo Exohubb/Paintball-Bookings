@@ -17,17 +17,12 @@ export default function CaptchaPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [captchaLoaded, setCaptchaLoaded] = useState(false);
 
   useEffect(() => {
-    // Check if site key exists
     if (!RECAPTCHA_SITE_KEY) {
       setError('reCAPTCHA is not configured. Please contact administrator.');
-      console.error('NEXT_PUBLIC_RECAPTCHA_SITE_KEY is missing');
       return;
     }
-
-    console.log('Loading reCAPTCHA with site key:', RECAPTCHA_SITE_KEY.substring(0, 20) + '...');
 
     const script = document.createElement('script');
     script.src = `https://www.google.com/recaptcha/api.js?render=explicit`;
@@ -35,20 +30,14 @@ export default function CaptchaPage() {
     script.defer = true;
     
     script.onload = () => {
-      console.log('reCAPTCHA script loaded');
-      
       if (window.grecaptcha) {
         window.grecaptcha.ready(() => {
-          console.log('reCAPTCHA ready, rendering...');
-          
           try {
             window.grecaptcha.render('recaptcha-container', {
               sitekey: RECAPTCHA_SITE_KEY,
               callback: 'onCaptchaVerify',
               theme: 'dark',
             });
-            setCaptchaLoaded(true);
-            console.log('reCAPTCHA rendered successfully');
           } catch (err) {
             console.error('reCAPTCHA render error:', err);
             setError('Failed to load reCAPTCHA. Please refresh the page.');
@@ -58,14 +47,12 @@ export default function CaptchaPage() {
     };
 
     script.onerror = () => {
-      console.error('Failed to load reCAPTCHA script');
       setError('Failed to load reCAPTCHA. Please check your internet connection.');
     };
 
     document.body.appendChild(script);
 
     window.onCaptchaVerify = async (token: string) => {
-      console.log('Captcha verified, token received');
       setLoading(true);
       setError('');
 
@@ -79,7 +66,6 @@ export default function CaptchaPage() {
         const data = await response.json();
 
         if (response.ok && data.success) {
-          console.log('Captcha verification successful');
           router.push('/auth/otp');
         } else {
           setError('Captcha verification failed. Please try again.');
@@ -109,12 +95,6 @@ export default function CaptchaPage() {
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-2">Security Check</h1>
           <p className="text-gray-400">Please verify you're human</p>
-        </div>
-
-        {/* Debug info */}
-        <div className="mb-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg text-xs">
-          <div>Site Key: {RECAPTCHA_SITE_KEY ? '✓ Configured' : '✗ Missing'}</div>
-          <div>Script: {captchaLoaded ? '✓ Loaded' : '⏳ Loading...'}</div>
         </div>
 
         {error && (
