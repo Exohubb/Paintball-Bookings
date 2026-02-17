@@ -3,7 +3,7 @@ export interface TimeSlot {
   start_time: string;
   end_time: string;
   slot_name: string;
-  slot_type: 'team'; // Only team now
+  slot_type: 'team';
   slot_order: number;
   created_at: string;
 }
@@ -27,6 +27,9 @@ export interface TeamBooking {
   claim_expires_at: string | null;
   created_at: string;
   team_members?: TeamMember[];
+  time_slots?: {
+    slot_name: string;
+  };
 }
 
 export interface TeamMember {
